@@ -68,7 +68,7 @@
 
 #if __NetBSD__
 #include <sys/exec_elf.h>
-typedef Elf_Note Elf64_Nhdr;
+// typedef Elf_Note Elf64_Nhdr;
 
 /**
    TODO: Elf_Note does not appear as a definition in NetBSD. Looks like th struct is similar to Elf64_Nhdr. Need to assocaite Elf_Note with Elf64_Nhdr or rewrite section using Elf64_Nhdr in place of Elf_Note
@@ -346,7 +346,11 @@ analyse_elf(struct pkg *pkg, const char *fpath)
 				goto cleanup;
 			}
 			else if (data->d_buf != NULL) {
+        #if __NetBSD__
+        Elf64_Nhdr *en = (Elf64_Nhdr *) data->d_buf;
+        #else
 				Elf_Note *en = (Elf_Note *)data->d_buf;
+        #endif
 				if (en->n_type == NT_ABI_TAG)
 					note = scn;
 			}
@@ -741,7 +745,11 @@ aeabi_parse_arm_attributes(void *data, size_t length)
 static bool
 elf_note_analyse(Elf_Data *data, GElf_Ehdr *elfhdr, struct elf_info *ei)
 {
+  #if __NetBSD__
+  Elf64_Nhdr note;
+  #else
 	Elf_Note note;
+  #endif
 	char *src;
 	uint32_t gnu_abi_tag[4];
 	char *note_os[6] = {"Linux", "GNU", "Solaris", "FreeBSD", "NetBSD", "Syllable"};
@@ -753,7 +761,11 @@ elf_note_analyse(Elf_Data *data, GElf_Ehdr *elfhdr, struct elf_info *ei)
 	src = data->d_buf;
 
 	while ((uintptr_t)src < ((uintptr_t)data->d_buf + data->d_size)) {
-		memcpy(&note, src, sizeof(Elf_Note));
+    #if __NetBSD__
+    memcpy(&note, src, sizeof(Elf64_Nhdr));
+    #else
+    memcpy(&note, src, sizeof(Elf_Note));
+    #endif
 		src += sizeof(Elf_Note);
 		if ((strncmp ((const char *) src, "FreeBSD", note.n_namesz) == 0) ||
 		    (strncmp ((const char *) src, "DragonFly", note.n_namesz) == 0) ||
