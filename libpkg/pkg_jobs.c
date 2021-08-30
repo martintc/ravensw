@@ -2122,6 +2122,18 @@ pkg_jobs_fetch(struct pkg_jobs *j)
 		}
 	}
 	fs_avail = fs.f_bsize * (int64_t)fs.f_bavail;
+#elif __NetBSD__
+  struct statvfs fs;
+  while (statvfs(cachedir, &fs) == -1) {
+		if (errno == ENOENT) {
+			if (mkdirs(cachedir) != EPKG_OK)
+				return (EPKG_FATAL);
+		} else {
+			pkg_emit_errno("statvfs", cachedir);
+			return (EPKG_FATAL);
+		}
+  }
+  fs_avail = fs.f_bsize * (int64_t)fs.f_bavail;
 #else
 #  ifdef HAVE_FSTATFS
 	struct statfs fs;
