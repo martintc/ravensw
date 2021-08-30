@@ -66,6 +66,16 @@
 #include "private/elf_tables.h"
 #include "private/ldconfig.h"
 
+#if __NetBSD__
+#include <sys/exec_elf.h>
+typedef Elf_Note Elf64_Nhdr;
+
+/**
+   TODO: Elf_Note does not appear as a definition in NetBSD. Looks like th struct is similar to Elf64_Nhdr. Need to assocaite Elf_Note with Elf64_Nhdr or rewrite section using Elf64_Nhdr in place of Elf_Note
+ */
+
+#endif
+
 #ifndef NT_ABI_TAG
 #define NT_ABI_TAG 1
 #endif
