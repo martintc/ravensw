@@ -53,6 +53,10 @@
 #include <sys/statvfs.h>
 #endif
 
+#if __NetBSD__
+#include <sys/statvfs.h>
+#endif
+
 #include "pkg.h"
 #include "private/event.h"
 #include "private/pkg.h"
