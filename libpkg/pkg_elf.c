@@ -763,10 +763,11 @@ elf_note_analyse(Elf_Data *data, GElf_Ehdr *elfhdr, struct elf_info *ei)
 	while ((uintptr_t)src < ((uintptr_t)data->d_buf + data->d_size)) {
     #if __NetBSD__
     memcpy(&note, src, sizeof(Elf64_Nhdr));
+    src += sizeof(Elf64_Nhdr);
     #else
     memcpy(&note, src, sizeof(Elf_Note));
+    src += sizeof(Elf_Note);
     #endif
-		src += sizeof(Elf_Note);
 		if ((strncmp ((const char *) src, "FreeBSD", note.n_namesz) == 0) ||
 		    (strncmp ((const char *) src, "DragonFly", note.n_namesz) == 0) ||
 		    (strncmp ((const char *) src, "NetBSD", note.n_namesz) == 0) ||
