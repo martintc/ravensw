@@ -178,6 +178,7 @@ exec_install(int argc, char **argv)
 	retcode = pkgdb_access(mode, repo_type);
 
 	if (retcode == EPKG_ENOACCESS && dry_run) {
+	  printf("181\n");
 		auto_update = false;
 		retcode = pkgdb_access(PKGDB_MODE_READ,
 				       repo_type);
@@ -186,10 +187,14 @@ exec_install(int argc, char **argv)
 	if (retcode == EPKG_ENOACCESS) {
 		port_warnx("Insufficient privileges to install packages");
 		return (EX_NOPERM);
-	} else if (retcode != EPKG_OK)
+	} else if (retcode != EPKG_OK) {
+	  printf("191\n");
 		return (EX_IOERR);
-	else
+	}
+	else {
+	  printf("195\n");
 		retcode = EX_SOFTWARE;
+	}
 
 	/* first update the remote repositories if needed */
 	if (auto_update && pkg_repos_total_count() > 0 &&
@@ -207,20 +212,26 @@ exec_install(int argc, char **argv)
 		return (EX_TEMPFAIL);
 	}
 
-	if (pkg_jobs_new(&jobs, PKG_JOBS_INSTALL, db) != EPKG_OK)
+	if (pkg_jobs_new(&jobs, PKG_JOBS_INSTALL, db) != EPKG_OK) {
+	  printf("211\n");
 		goto cleanup;
+	}
 
 	if (!local_only && reponame != NULL &&
-			pkg_jobs_set_repository(jobs, reponame) != EPKG_OK)
-		goto cleanup;
+	    pkg_jobs_set_repository(jobs, reponame) != EPKG_OK) {
+	  printf("215\n");
+	  goto cleanup;
+	}
 
 	pkg_jobs_set_flags(jobs, f);
 
-	if (pkg_jobs_add(jobs, match, argv, argc) == EPKG_FATAL)
+	if (pkg_jobs_add(jobs, match, argv, argc) == EPKG_FATAL) {
+	  printf("220\n");
 		goto cleanup;
+	}
 
 	if (pkg_jobs_solve(jobs) != EPKG_OK) {
-	  printf("this is a line");
+	        printf("225\n");
 		goto cleanup;
 	}
 
