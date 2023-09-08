@@ -447,6 +447,7 @@ exec_search(int argc, char **argv)
 
 	flags = info_flags(opt, true);
 	while ((ret = pkgdb_it_next(it, &pkg, flags)) == EPKG_OK) {
+	  printf("here is a package");
 		print_info(pkg, opt);
 		atleastone = true;
 	}
