@@ -219,8 +219,10 @@ exec_install(int argc, char **argv)
 	if (pkg_jobs_add(jobs, match, argv, argc) == EPKG_FATAL)
 		goto cleanup;
 
-	if (pkg_jobs_solve(jobs) != EPKG_OK)
+	if (pkg_jobs_solve(jobs) != EPKG_OK) {
+	  printf("this is a line");
 		goto cleanup;
+	}
 
 	while ((nbactions = pkg_jobs_count(jobs)) > 0) {
 		rc = yes;
